@@ -7,14 +7,14 @@
   var fmt = function (n) { return Math.round(n).toLocaleString('en-US'); };
   var f1 = function (n) { return n.toFixed(1); };
   var NS = 'http://www.w3.org/2000/svg';
-  var INK = '#ededed', INK2 = '#a1a1a1', INK3 = '#6e6e6e', HAIR = 'rgba(255,255,255,0.12)';
-  var ACC = '#0070f3', AMBER = '#f4c063', TEAL = '#6fdbcb', RED = '#e5484d';
+  var INK = '#F1ECE2', INK2 = '#B9B3A6', INK3 = '#9C968A', HAIR = 'rgba(241,236,226,0.22)';
+  var ACC = '#F2A93B', AMBER = '#7FB0BC', TEAL = '#A3B06A', RED = '#E0764C';
 
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
   function txt(x, y, s, o) {
     o = o || {};
     return '<text x="' + x + '" y="' + y + '" font-size="' + (o.size || 11) + '" fill="' + (o.fill || INK2) +
-      '" text-anchor="' + (o.anchor || 'start') + '" font-family="ui-monospace, SF Mono, monospace"' +
+      '" text-anchor="' + (o.anchor || 'start') + '" font-family="Epilogue, system-ui, sans-serif"' +
       (o.w ? ' font-weight="' + o.w + '"' : '') + '>' + esc(s) + '</text>';
   }
   function seg(root, sel, cb) {
@@ -83,7 +83,7 @@
       if (!W) return;
       cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
       var bw = (maxx - minx) * 1.04, bh = (maxy - miny) * 1.04;
       var base = Math.min(W / bw, H / bh), vw = VIEWS[S.view], k = base * vw.z;
       var tx = W / 2 - vw.c[0] * k, ty = H / 2 - vw.c[1] * k;
@@ -197,7 +197,7 @@
       var s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" role="img" aria-label="Frame time per scene, one line per chip and camera. Use the slider and chips below to explore.">'];
       ticks.forEach(function (v) { s.push('<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(v) + '" y2="' + Y(v) + '" stroke="' + HAIR + '"/>' + txt(L - 6, Y(v) + 4, v, { anchor: 'end', fill: INK3, size: 10 })); });
       // selected scene band
-      s.push('<rect x="' + (L + S.sel * pw / sc.length) + '" y="' + T + '" width="' + (pw / sc.length) + '" height="' + ph + '" fill="rgba(255,255,255,0.045)"/>');
+      s.push('<rect x="' + (L + S.sel * pw / sc.length) + '" y="' + T + '" width="' + (pw / sc.length) + '" height="' + ph + '" fill="rgba(241,236,226,0.09)"/>');
       [[8.33, '120 Hz', RED], [16.67, '60 Hz', INK3]].forEach(function (r) {
         if (r[0] < ymin || r[0] > ymax) return;
         s.push('<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(r[0]) + '" y2="' + Y(r[0]) + '" stroke="' + r[2] + '" stroke-dasharray="2 4"/>' + txt(W - R - 2, Y(r[0]) - 4, r[1], { anchor: 'end', fill: r[2], size: 10 }));
@@ -213,7 +213,7 @@
         sc.forEach(function (c, i) {
           var p50 = c.runs[ser.id][0], p95 = c.runs[ser.id][1], r = i === S.sel ? 5 : 3.2;
           if (S.p95) s.push('<line x1="' + X(i) + '" x2="' + X(i) + '" y1="' + Y(p50) + '" y2="' + Y(p95) + '" stroke="' + ser.col + '" stroke-opacity="0.7" stroke-width="1.5"/><line x1="' + (X(i) - 4) + '" x2="' + (X(i) + 4) + '" y1="' + Y(p95) + '" y2="' + Y(p95) + '" stroke="' + ser.col + '" stroke-opacity="0.7" stroke-width="1.5"/>');
-          s.push(ser.dash ? '<rect x="' + (X(i) - r) + '" y="' + (Y(p50) - r) + '" width="' + 2 * r + '" height="' + 2 * r + '" rx="1.5" fill="#0a0a0a" stroke="' + ser.col + '" stroke-width="2"/>'
+          s.push(ser.dash ? '<rect x="' + (X(i) - r) + '" y="' + (Y(p50) - r) + '" width="' + 2 * r + '" height="' + 2 * r + '" fill="#000" stroke="' + ser.col + '" stroke-width="2"/>'
             : '<circle cx="' + X(i) + '" cy="' + Y(p50) + '" r="' + r + '" fill="' + ser.col + '"/>');
         });
       });
@@ -265,7 +265,7 @@
       [0, 20, 40, 60, 80].forEach(function (v) { var y = T + ph - v / mx * ph; s.push('<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y + '" y2="' + y + '" stroke="' + HAIR + '"/>' + txt(L - 6, y + 4, v, { anchor: 'end', fill: INK3, size: 10 })); });
       G.forEach(function (g, gi) {
         var gx = L + gi * gw;
-        if (gi === S.sel) s.push('<rect x="' + gx + '" y="' + T + '" width="' + gw + '" height="' + ph + '" fill="rgba(255,255,255,0.045)"/>');
+        if (gi === S.sel) s.push('<rect x="' + gx + '" y="' + T + '" width="' + gw + '" height="' + ph + '" fill="rgba(241,236,226,0.09)"/>');
         var bw = Math.min(34, (gw - 10) / Math.max(act.length, 1) - 3), tot = act.length * (bw + 3) - 3;
         act.forEach(function (ser, si) {
           var v = g[ser.k], h = v / mx * ph, x = gx + (gw - tot) / 2 + si * (bw + 3);
@@ -330,9 +330,11 @@
           for (var i = 0; i < df.d.length; i++) {
             var v = df.d[i], q = i * 4;
             if (v > S.thr) {
-              cnt++; var t = v / df.max; // blue to white
-              o[q] = 0 + 255 * t * t; o[q + 1] = 112 + 143 * t; o[q + 2] = 243 + 12 * t; o[q + 3] = 255;
-            } else { o[q] = 10; o[q + 1] = 10; o[q + 2] = 10; o[q + 3] = 255; }
+              cnt++; var t = v / df.max, a = t < 0.5 ? t * 2 : (t - 0.5) * 2; // dark amber to amber to bone
+              if (t < 0.5) { o[q] = 90 + 152 * a; o[q + 1] = 52 + 117 * a; o[q + 2] = 8 + 51 * a; }
+              else { o[q] = 242 - 1 * a; o[q + 1] = 169 + 67 * a; o[q + 2] = 59 + 167 * a; }
+              o[q + 3] = 255;
+            } else { o[q] = 0; o[q + 1] = 0; o[q + 2] = 0; o[q + 3] = 255; }
           }
           x.putImageData(im, 0, 0);
           rd.innerHTML = '<b>' + fmt(cnt) + '</b> of ' + fmt(df.d.length) + ' pixels differ by more than ' + S.thr + '/255 (' + (cnt / df.d.length * 100).toFixed(2) + '%). Biggest single channel change: ' + df.max + '/255. Everything else is bit for bit the same.';

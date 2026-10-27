@@ -15,8 +15,9 @@ def code(src, cap=None):
 def fig(inner, cap=None):
     c = f'<figcaption>{cap}</figcaption>' if cap else ''
     return f'<figure><div class="tile">{inner}</div>{c}</figure>'
-def img(src, alt, cap):
-    return f'<figure><div class="tile"><img src="{src}" alt="{html.escape(alt)}" loading="lazy"></div><figcaption>{cap}</figcaption></figure>'
+def img(src, alt, cap, cls='', size=''):
+    c = f' class="{cls}"' if cls else ''
+    return f'<figure{c}><div class="tile"><img src="{src}" alt="{html.escape(alt)}"{size} loading="lazy"></div><figcaption>{cap}</figcaption></figure>'
 
 
 def widget(wid, live, fallback, cap):
@@ -49,10 +50,25 @@ ABL_LIVE = """<div class="chips" role="group" aria-label="Bars"></div>
 SHADOW_LIVE = """<div class="ctl">
 <div class="seg" role="group" aria-label="Shot"><button type="button" class="s-btn" data-v="wide" aria-pressed="true">Wide</button><button type="button" class="s-btn" data-v="close" aria-pressed="false">Close up</button></div>
 <div class="seg" role="group" aria-label="View"><button type="button" class="m-btn" data-v="slider" aria-pressed="true">Slider</button><button type="button" class="m-btn" data-v="diff" aria-pressed="false">Pixel difference</button></div></div>
-<div class="stage"><img class="bot" alt="" width="1024" height="640"><img class="top" alt="" width="1024" height="640"><canvas></canvas><div class="bar"></div><span class="tag l">no shadows</span><span class="tag r">traced shadows</span></div>
+<div class="stage"><img class="bot" src="../../img/wide_ao.png" alt="Wide shot of the cottage with no shadows" width="1024" height="640"><img class="top" src="../../img/wide_full.png" alt="Same wide shot of the cottage with traced shadows" width="1024" height="640"><canvas></canvas><div class="bar"></div><span class="tag l">no shadows</span><span class="tag r">traced shadows</span></div>
 <div class="pos-wrap"><input class="pos" type="range" min="0" max="100" step="0.5" value="50" aria-label="Slide between no shadows and traced shadows"></div>
 <div class="thr-wrap" hidden><input class="thr" type="range" min="0" max="55" step="1" value="0" aria-label="Ignore differences smaller than this"><div class="rl"><span>count every changed pixel</span><span>only big changes</span></div></div>
 <div class="readout" aria-live="polite"></div>"""
+
+X_PATH = "M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"
+GH_PATH = "M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+X_URL = 'https://x.com/worldwidewebbco'
+GH_URL = 'https://github.com/0x63616c'
+STUDIO = 'Independent app studio. Currently building Quantum, a voxel editor made for AI agents.'
+DECK = 'Culling, greedy meshing, chunks, exact voxel shadows, and the bench that stops me lying to myself.'
+TITLE = 'How Quantum draws a cottage without drawing 333,804 triangles'
+POST_URL = 'posts/quantum-renderer/'
+# Home tagline, rotating. Ranked options 1, 2, 3 and 5 from the tagline round; the long #4 is left out.
+TAGLINES = ['Every triangle accounted for.', 'Apps with the lid off.', 'A world for agents to build in.', 'Cubes in, worlds out.']
+
+def icon(path, size):
+    return (f'<svg viewBox="0 0 24 24" width="{size}" height="{size}" aria-hidden="true" focusable="false">'
+            f'<path fill="currentColor" d="{path}"/></svg>')
 
 HEAD = '''<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
@@ -60,34 +76,64 @@ HEAD = '''<!doctype html>
 <title>{title}</title>
 <meta name="description" content="{desc}">
 <meta name="theme-color" content="#000000">
-<meta property="og:title" content="{title}"><meta property="og:description" content="{desc}"><meta property="og:type" content="article">
+<meta name="color-scheme" content="dark">
+<meta property="og:title" content="{title}"><meta property="og:description" content="{desc}"><meta property="og:type" content="{kind}">
+<link rel="icon" href="{base}assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="{base}assets/favicon-32x32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="{base}assets/favicon-16x16.png" type="image/png" sizes="16x16">
+<link rel="icon" href="{base}favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="{base}apple-touch-icon.png">
+<link rel="manifest" href="{base}site.webmanifest">
+<link rel="preload" href="{base}assets/fonts/epilogue.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{base}assets/fonts/literata.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{base}assets/style.css">
 <script>document.documentElement.className+=" js"</script>
 </head><body>
-<header class="site"><div class="wrap"><a class="brand" href="{base}">blog <span>/ calum</span></a><nav><a href="{base}">posts</a></nav></div></header>
-<main><div class="wrap">
+<a class="skip" href="#main">Skip to the content</a>
+<header class="site"><div class="wrap"><div class="id"><a class="brand" href="{base}."><img class="m" src="{base}assets/favicon.svg" width="34" height="34" alt="">World Wide Webb</a><div class="links"><a href="''' + X_URL + '''" aria-label="World Wide Webb on X">''' + icon(X_PATH, 20) + '''</a><a href="''' + GH_URL + '''" aria-label="0x63616c on GitHub">''' + icon(GH_PATH, 22) + '''</a></div></div><nav aria-label="Site"><a href="{base}."{cur}>Writing</a></nav></div></header>
+<main id="main">
 '''
-FOOT = '''</div></main>
-<footer class="site"><div class="wrap">Plain HTML, black theme borrowed from the rest of my sites. No tracking, no cookies.</div></footer>
-</body></html>
+FOOT = '''</main>
+<footer class="site"><div class="wrap"><span class="l"><img class="m" src="{base}assets/favicon.svg" width="28" height="28" alt="">World Wide Webb</span><span>&copy; 2026 World Wide Webb</span></div></footer>
 '''
+CLOSE = '</body></html>\n'
+
+def slug(t):
+    return re.sub(r'[^a-z0-9]+', '-', html.unescape(t).lower()).strip('-')
+
+def finish_post(body):
+    # Give every h2 an id, build the contents rail from them, and let wide tables scroll on phones.
+    heads = re.findall(r'<h2>(.*?)</h2>', body)
+    ids = [slug(re.sub(r'<[^>]+>', '', h)) for h in heads]
+    for h, i in zip(heads, ids):
+        body = body.replace(f'<h2>{h}</h2>', f'<h2 id="{i}">{h}</h2>', 1)
+    items = ''.join(f'<li><a href="#{i}"><span>{n}</span>{h}</a></li>' for n, (h, i) in enumerate(zip(heads, ids), 1))
+    rail = f'<nav class="rail" aria-label="In this post"><details open><summary>In this post</summary><ol>{items}</ol></details></nav>'
+    body = body.replace('<!--RAIL-->', rail)
+    body = re.sub(r'(<table>.*?</table>)', r'<div class="tscroll">\1</div>', body, flags=re.S)
+    return body
 
 export_data.mesh(); export_data.charts()
 greedy_svg, g_units, g_quads = F.greedy_diagram()
 trace_svg, t_naive, t_fast = F.trace_diagram()
 abl_svg, A = F.ablation_chart()
 
-post = HEAD.format(title='How Quantum draws a cottage without drawing 333,804 triangles',
+post = HEAD.format(title=TITLE, kind='article', cur='',
                    desc='Culling, greedy meshing, chunks, exact voxel shadows and a bench that keeps me honest, with the real numbers from my renderer.',
                    base='../../')
-post += '''<article>
-<h1>How Quantum draws a cottage without drawing 333,804 triangles</h1>
-<div class="meta">Oct 26, 2026 &middot; updated Oct 27 with the shadow speed-up &middot; renderer notes</div>
-<p class="lede">Quantum is the voxel editor I'm building. It was called Voxelite until very recently, which is why the code paths below still say voxelite. The part I keep poking at is the renderer, because an editor with a stuttering viewport is just a sad spreadsheet.</p>
+post += f'''<section class="top"><div class="wrap">
+<p class="when">Oct 26, 2026</p>
+<h1>{TITLE}</h1>
+<p class="deck">{DECK}</p>
+<p class="upd">Updated Oct 27 with the shadow speed-up.</p>
+</div></section>
+<div class="wrap art"><!--RAIL--><article>
+<p class="lede">Quantum is the voxel editor I'm building. It was called Voxelite until very recently, which is why the code paths below still say voxelite. The renderer is the part I keep poking at, because an editor with a stuttering viewport is a bad editor.</p>
+''' + '''
 <p>My test scene is a small autumn cottage with a tree, a fence and a chimney I'm unreasonably proud of. The example file in the repo has 27,817 voxels.</p>
-''' + img('../../img/wide_full.png', 'Isometric render of a voxel cottage with an orange autumn tree',
-          'A render from the CPU rasteriser in the repo, because the box I wrote this on has no GPU. It is slow but deterministic, which matters at the end. The real viewport is wgpu on Metal.') + '''
-<p>This is not a tutorial. There are plenty of those and they hold your hand better than I do. It's the handful of things that moved the needle, in the order I hit them, with real numbers where I have them and a plain note where I don't.</p>
+''' + img('../../img/wide_black.png', 'Isometric render of a voxel cottage with an orange autumn tree',
+          'A render from the CPU rasteriser in the repo, because the box I wrote this on has no GPU. It is slow but deterministic, which matters at the end. The real viewport is wgpu on Metal.', cls='pic', size=' width="1024" height="640"') + '''
+<p>What follows is the handful of changes that moved the needle, in the order I hit them. Real numbers where I have them, and a plain note where I don't.</p>
 
 <h2>The version everyone writes first</h2>
 <p>One cube per voxel. Eight corners, twelve triangles, done.</p>
@@ -100,7 +146,7 @@ for voxel in scene.voxels() {
 
 <h2>Don't draw faces nobody can see</h2>
 <p>Put two cubes next to each other and the faces that touch are inside solid matter. Nobody will ever look at them. In a 3&times;3&times;3 block that's 162 faces, and only the 54 on the outside can ever show up on screen.</p>
-''' + fig(F.cull_diagram(), 'Red edges touch another voxel, blue edges touch air. A 2D cross section keeps the picture readable.') + '''
+''' + fig(F.cull_diagram(), 'Brick-red edges touch another voxel, amber edges touch air. A 2D cross section keeps the picture readable.') + '''
 <p>The check is one hash lookup per face. If there's a voxel on the other side, skip it.</p>
 ''' + code('''
 let Some(&slot) = cells.get(&p) else { continue };
@@ -125,7 +171,7 @@ if flat {
 }''', 'same file, the grow step') + '''
 ''' + fig(F.ladder_chart(), 'Triangles for the cottage after each step. The first three rows are the plain CPU mesher run on the example file. The last row is the mesher the GPU actually uses, from the baseline run.') + '''
 <p>So the GPU mesher is a worse greedy mesher than the plain one, on purpose. 17,201 quads (34,402 triangles) against 9,817 quads (19,634 triangles). I'm paying quads for nicer shading. One more oddity: the scene in my baseline run has 27,897 voxels and the file in the repo has 27,817. I don't know where 80 voxels went, I'm choosing to blame the fence.</p>
-<p>Words only go so far, so here's the cottage. It's the real mesher output for the example file, drawn on this page by a small script: flat shaded, one fixed camera, no AO, no shadows. It isn't my renderer. Pick a mode, turn the wireframe on, then go look at the roof. The picture never changes between modes. Only the number of pieces it took does.</p>
+<p>Here's the cottage as the real mesher sees it. This is the actual mesher output for the example file, flat shaded, one fixed camera, no AO, no shadows. It isn't my renderer. Pick a mode, turn the wireframe on, then go look at the roof. The picture never changes between modes. Only the number of pieces it took does.</p>
 ''' + widget('w-mesh', MESH_LIVE, 'This one needs JavaScript. The numbers it shows are 166,902 faces for a cube per voxel, 21,282 after culling and 9,817 after greedy meshing, and the ladder above has the triangle counts.',
  'The wireframe draws the faces each mode would hand to the GPU, front facing ones only, so the cube mode shows half of its 166,902. The fill is the same in every mode. Face counts are computed in the page from the 27,817 voxels and 9,817 quads that came out of the real mesher, and the triangle counts are twice the face counts. Greedy only merges neighbours that share a palette colour, and this cottage is speckled on purpose, so zoom in on the roof and you will see most quads stay small.') + '''
 
@@ -161,7 +207,7 @@ if (occupancy.words[mask] & (1u << (brick % 32u))) == 0u {
     if (occupancy.words[word] & (1u << (bit % 32u))) != 0u { return true; }
     // inside a busy brick: walk one cell along the closest axis
 }''', 'gpu/viewport.wgsl, trace_shadow, trimmed (the full loop runs up to 768 times)') + '''
-''' + fig(trace_svg, f'A toy ray on a toy grid. Stepping cell by cell takes {t_naive} steps and skipping empty bricks takes {t_fast}, and both land on the same red cell. The step counts are computed from this toy, not from the renderer.') + '''
+''' + fig(trace_svg, f'A toy ray on a toy grid. Stepping cell by cell takes {t_naive} steps and skipping empty bricks takes {t_fast}, and both land on the marked cell. The step counts are computed from this toy, not from the renderer.') + '''
 <p>That works, and it's still the most expensive thing in the frame by a distance. I turned it off to see how much, one change at a time on the real shader, 60 frames per phase.</p>
 ''' + widget('w-abl', ABL_LIVE, abl_svg, 'Baseline run on the Mac mini M2. GPU time from timestamp queries, median of 60 frames. Tap a group for its numbers, and switch bars off to compare two.') + f'''
 <div class="note"><p>Read this chart carefully, because it isn't a before and after. It's what shadows cost, which is the ceiling on what any shadow speed-up could ever win. At the fit camera on Autumn that's {A[('Autumn, fit','base')]:.1f} ms down to {A[('Autumn, fit','noshadow')]:.1f}. Zoomed in on the 1M terrain it's {A[('Terrain 1M, close','base')]:.1f} ms down to {A[('Terrain 1M, close','noshadow')]:.1f}. This is the budget the speed-up below was spending from.</p></div>
@@ -195,25 +241,49 @@ if (occupancy.words[mask] & (1u << (brick % 32u))) == 0u {
 <p>Here is roughly what the diff output looks like. This one is the cottage with shadows on against shadows off, from the CPU renderer. It isn't a regression, I just needed a real pair of images that differ.</p>
 ''' + img('../../img/diff_heatmap.png', 'Log-scaled difference heatmap, black where the images match', 'Black means identical. 25,140 of 655,360 pixels differ (3.84 percent), 22,394 of them by more than 6/255 in at least one channel, biggest channel difference 55. The tolerance mode would reject this and exact mode would reject it harder, which is the point.') + '''
 <div class="note"><p>Status: both tools are merged now, and the shadow change above was checked with them. The baseline numbers earlier in the post still come from the one-off instrumented run.</p></div>
-<p>That's where it is.</p>
 
 <h2>Where the numbers come from</h2>
-<p>All speed numbers come from a baseline run of the production Metal worker driven headless: 4128&times;3232 pixel target, 4x MSAA, 2x supersample, exact voxel shadows, commit d81e670, on 2026-10-26. The M2 mini was busy running CI during the runs (load average 11 to 66), so treat those timings as rough. The M5 Pro was in normal use and its numbers are from a single run. The shadow speed-up table is from the same M2 mini, before and after the change, and it was under load then too. The raw per-frame data for the ablation and the triangle counts is in <code>data/</code> in this site's repo, along with the script that draws every chart on this page.</p>
-</article>
-''' + FOOT.replace('</body>', '<script src="../../assets/mesh-data.js"></script>\n<script src="../../assets/chart-data.js"></script>\n<script src="../../assets/widgets.js"></script>\n</body>')
+<p>All speed numbers come from a baseline run of the production Metal worker driven headless: 4128&times;3232 pixel target, 4x MSAA, 2x supersample, exact voxel shadows, commit d81e670, on 2026-10-26. The M2 mini was busy running CI during the runs (load average 11 to 66), so treat those timings as rough. The M5 Pro was in normal use and its numbers are from a single run. The shadow speed-up table is from the same M2 mini, before and after the change, and it was under load then too. The raw per-frame data for the ablation and the triangle counts is in the <a href="https://github.com/0x63616c/blog/tree/main/data"><code>data</code> folder of the blog's repo</a>.</p>
+</article></div>
+''' + FOOT.format(base='../../') + '<script src="../../assets/mesh-data.js"></script>\n<script src="../../assets/chart-data.js"></script>\n<script src="../../assets/widgets.js"></script>\n<script src="../../assets/site.js"></script>\n' + CLOSE
+post = finish_post(post)
 
 os.makedirs(f'{ROOT}/posts/quantum-renderer', exist_ok=True)
 open(f'{ROOT}/posts/quantum-renderer/index.html', 'w').write(post)
 
-index = HEAD.format(title='Calum\'s blog', desc='Notes on things I build.', base='') + '''
-<h1>Notes on things I build</h1>
-<p class="lede">Mostly Quantum for now, a voxel editor with a renderer I fuss over too much.</p>
-<ul class="posts">
-<li><a href="posts/quantum-renderer/"><div class="tile">
-<div class="t">How Quantum draws a cottage without drawing 333,804 triangles</div>
-<div class="d">Culling, greedy meshing, chunks, exact voxel shadows, and the bench that stops me lying to myself.</div>
-<div class="m">Oct 26, 2026</div></div></a></li>
-</ul>
-''' + FOOT
+def tag_span(k, t):
+    return f'<span class="tg on">{t}</span>' if k == 0 else f'<span class="tg" aria-hidden="true">{t}</span>'
+tag_spans = ''.join(tag_span(k, t) for k, t in enumerate(TAGLINES))
+ROTATE = '''<script>
+(function () {
+  var hero = document.querySelector('.hero'), t = hero.querySelectorAll('.tg'), n = t.length, i = Math.floor(Math.random() * n);
+  function show(k) {
+    for (var j = 0; j < n; j++) {
+      t[j].classList.toggle('on', j === k);
+      if (j === k) t[j].removeAttribute('aria-hidden'); else t[j].setAttribute('aria-hidden', 'true');
+    }
+    i = k;
+  }
+  show(i);
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var held = false;
+  hero.addEventListener('mouseenter', function () { held = true; });
+  hero.addEventListener('mouseleave', function () { held = false; });
+  hero.addEventListener('focusin', function () { held = true; });
+  hero.addEventListener('focusout', function () { held = false; });
+  setInterval(function () { if (!held && !document.hidden) show((i + 1) % n); }, 6500);
+})();
+</script>'''
+index = HEAD.format(title='World Wide Webb', kind='website', cur=' aria-current="page"', desc='Writing from World Wide Webb, an independent app studio.', base='') + f'''
+<section class="hero"><div class="wrap">
+<h1 class="tag">{tag_spans}</h1>
+<p class="say">{STUDIO}</p>
+</div></section>
+{ROTATE}
+<section class="ch one" id="latest"><img class="cot" src="img/cottage.png" width="1425" height="1305" alt="Isometric voxel cottage with an orange autumn tree"><div class="wrap">
+<div><span class="no">Latest</span><p class="when">Oct 26, 2026</p></div>
+<div><h2><a href="{POST_URL}">{TITLE}</a></h2><p>{DECK}</p><a class="go" href="{POST_URL}">Read the post</a></div>
+</div></section>
+''' + FOOT.format(base='') + CLOSE
 open(f'{ROOT}/index.html', 'w').write(index)
 print('built', len(post))
