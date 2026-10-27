@@ -4,21 +4,51 @@
 <title>World Wide Webb</title>
 <meta name="description" content="Writing from World Wide Webb, an independent app studio.">
 <meta name="theme-color" content="#000000">
-<meta property="og:title" content="World Wide Webb"><meta property="og:description" content="Writing from World Wide Webb, an independent app studio."><meta property="og:type" content="article">
+<meta name="color-scheme" content="dark">
+<meta property="og:title" content="World Wide Webb"><meta property="og:description" content="Writing from World Wide Webb, an independent app studio."><meta property="og:type" content="website">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32x32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="assets/favicon-16x16.png" type="image/png" sizes="16x16">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="preload" href="assets/fonts/epilogue.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/literata.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/style.css">
 <script>document.documentElement.className+=" js"</script>
 </head><body>
-<header class="site"><div class="wrap"><a class="brand" href="">World Wide Webb</a><nav><a href="">posts</a></nav></div></header>
-<main><div class="wrap">
+<a class="skip" href="#main">Skip to the content</a>
+<header class="site"><div class="wrap"><div class="id"><a class="brand" href="."><img class="m" src="assets/favicon.svg" width="34" height="34" alt="">World Wide Webb</a><div class="links"><a href="https://x.com/worldwidewebbco" aria-label="World Wide Webb on X"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/></svg></a><a href="https://github.com/0x63616c" aria-label="0x63616c on GitHub"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a></div></div><nav aria-label="Site"><a href="." aria-current="page">Writing</a></nav></div></header>
+<main id="main">
 
-<h1>Writing</h1>
-<p class="lede">World Wide Webb is an independent app studio. Currently building Quantum, a voxel editor made for AI agents.</p>
-<ul class="posts">
-<li><a href="posts/quantum-renderer/"><div class="tile">
-<div class="t">How Quantum draws a cottage without drawing 333,804 triangles</div>
-<div class="d">Culling, greedy meshing, chunks, exact voxel shadows, and the bench that stops me lying to myself.</div>
-<div class="m">Oct 26, 2026</div></div></a></li>
-</ul>
-</div></main>
-<footer class="site"><div class="wrap">&copy; 2026 World Wide Webb</div></footer>
+<section class="hero"><div class="wrap">
+<h1 class="tag"><span class="tg on">Every triangle accounted for.</span><span class="tg" aria-hidden="true">Apps with the lid off.</span><span class="tg" aria-hidden="true">A world for agents to build in.</span><span class="tg" aria-hidden="true">Cubes in, worlds out.</span></h1>
+<p class="say">Independent app studio. Currently building Quantum, a voxel editor made for AI agents.</p>
+</div></section>
+<script>
+(function () {
+  var hero = document.querySelector('.hero'), t = hero.querySelectorAll('.tg'), n = t.length, i = Math.floor(Math.random() * n);
+  function show(k) {
+    for (var j = 0; j < n; j++) {
+      t[j].classList.toggle('on', j === k);
+      if (j === k) t[j].removeAttribute('aria-hidden'); else t[j].setAttribute('aria-hidden', 'true');
+    }
+    i = k;
+  }
+  show(i);
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var held = false;
+  hero.addEventListener('mouseenter', function () { held = true; });
+  hero.addEventListener('mouseleave', function () { held = false; });
+  hero.addEventListener('focusin', function () { held = true; });
+  hero.addEventListener('focusout', function () { held = false; });
+  setInterval(function () { if (!held && !document.hidden) show((i + 1) % n); }, 6500);
+})();
+</script>
+<section class="ch one" id="latest"><img class="cot" src="img/cottage.png" width="1425" height="1305" alt="Isometric voxel cottage with an orange autumn tree"><div class="wrap">
+<div><span class="no">Latest</span><p class="when">Oct 26, 2026</p></div>
+<div><h2><a href="posts/quantum-renderer/">How Quantum draws a cottage without drawing 333,804 triangles</a></h2><p>Culling, greedy meshing, chunks, exact voxel shadows, and the bench that stops me lying to myself.</p><a class="go" href="posts/quantum-renderer/">Read the post</a></div>
+</div></section>
+</main>
+<footer class="site"><div class="wrap"><span class="l"><img class="m" src="assets/favicon.svg" width="28" height="28" alt="">World Wide Webb</span><span>&copy; 2026 World Wide Webb</span></div></footer>
 </body></html>
