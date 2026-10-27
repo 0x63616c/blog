@@ -67,3 +67,77 @@ th { color: var(--ink-3); font-weight: 600; font-size: 13px; font-family: var(--
 td.n { font-family: var(--mono); text-align: right; white-space: nowrap; }
 footer.site { border-top: 1px solid var(--hair); color: var(--ink-3); font-size: 14px; }
 footer.site .wrap { padding-top: 22px; padding-bottom: 40px; }
+
+/* ---- interactive widgets ---- */
+.w .live { display: none; }
+.js .w .live { display: block; }
+.js .w .fallback { display: none; }
+.w .fallback { color: var(--ink-2); font-size: 15px; }
+.ctl { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; margin-bottom: 12px; }
+.seg { display: inline-flex; border: 1px solid var(--hair-3, rgba(255,255,255,.18)); border-radius: 999px; padding: 3px; background: var(--tile-2); }
+.seg button, .tog, .chip {
+  font: inherit; font-size: 14px; color: var(--ink-2); background: transparent; border: 0; cursor: pointer;
+  min-height: 38px; padding: 0 14px; border-radius: 999px; letter-spacing: -0.01em; touch-action: manipulation;
+}
+.seg button[aria-pressed="true"] { background: var(--acc); color: #fff; }
+.tog, .chip { border: 1px solid var(--hair-3, rgba(255,255,255,.18)); background: var(--tile-2); display: inline-flex; align-items: center; gap: 8px; }
+.tog[aria-pressed="true"], .chip[aria-pressed="true"] { color: #fff; border-color: var(--acc); background: var(--acc-dim); }
+.chip[aria-pressed="false"] { opacity: .55; }
+.chip i, .readout i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.chip { padding: 0 12px; font-size: 13px; min-height: 36px; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+.w canvas { display: block; width: 100%; aspect-ratio: 3 / 2; border-radius: 12px; background: #0a0a0a; }
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+.card { font: inherit; text-align: left; color: var(--ink); background: var(--tile-2); border: 1px solid var(--hair); border-radius: 14px; padding: 10px 12px; cursor: pointer; min-width: 0; touch-action: manipulation; }
+.card[aria-pressed="true"] { border-color: var(--acc); background: var(--acc-dim); }
+.card .n { display: block; font-size: 12px; color: var(--ink-2); margin-bottom: 4px; }
+.card .f { display: block; font-family: var(--mono); font-size: 17px; letter-spacing: -0.03em; }
+.card .u { font-size: 11px; color: var(--ink-3); }
+.card .t { font-family: var(--mono); font-size: 12px; color: var(--ink-2); }
+.card .x { display: block; font-size: 12px; color: var(--teal); margin-top: 2px; }
+.w .chart svg { display: block; max-width: 100%; height: auto; touch-action: pan-y; }
+.w input[type=range] { width: 100%; height: 36px; margin: 6px 0 2px; accent-color: var(--acc); background: transparent; }
+.rl { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-3); font-family: var(--mono); }
+.readout { font-size: 14px; line-height: 1.55; color: var(--ink-2); margin-top: 10px; }
+.readout b { color: var(--ink); font-weight: 600; }
+.facts { margin-bottom: 8px; }
+.facts b { color: var(--ink); }
+.readout table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 0; }
+.readout th { text-align: left; color: var(--ink-3); font-weight: 500; padding: 4px 6px 4px 0; border-bottom: 1px solid var(--hair); font-size: 12px; }
+.readout td { padding: 6px 6px 6px 0; border-bottom: 1px solid var(--hair); font-family: var(--mono); letter-spacing: -0.02em; }
+.readout td:first-child { font-family: inherit; white-space: nowrap; }
+.readout td i { margin-right: 7px; }
+.readout .ok { color: var(--teal); } .readout .no { color: var(--red); }
+.stage { position: relative; overflow: hidden; border-radius: 12px; background: #0a0a0a; user-select: none; -webkit-user-select: none; touch-action: pan-y; line-height: 0; }
+.stage img { display: block; width: 100%; height: auto; border-radius: 0; }
+.stage .top { position: absolute; inset: 0; clip-path: inset(0 0 0 50%); }
+.stage .bar { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; margin-left: -1px; background: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.4); pointer-events: none; }
+.stage .bar::after { content: ""; position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; margin: -15px; border-radius: 50%; background: var(--acc); border: 2px solid #fff; }
+.stage .tag { position: absolute; bottom: 8px; font: 12px/1 var(--mono); background: rgba(0,0,0,.65); color: #fff; padding: 5px 8px; border-radius: 6px; }
+.stage .tag.l { left: 8px; } .stage .tag.r { right: 8px; }
+.stage canvas { display: none; width: 100%; height: auto; border-radius: 0; aspect-ratio: auto; }
+.stage.isdiff canvas { display: block; }
+.stage.isdiff img, .stage.isdiff .bar, .stage.isdiff .tag { display: none; }
+.stage.isdiff .top { display: none; }
+.stage:not(.isdiff) .bot { position: relative; }
+.stage.isdiff .bot { display: none; }
+.thr-wrap[hidden], .pos-wrap[hidden] { display: none; }
+@media (max-width: 620px) {
+  .card .f { font-size: 15px; } .card { padding: 9px 10px; }
+  .seg button { padding: 0 11px; }
+  .tile { padding: 14px; }
+}
+.static-scroll { overflow-x: auto; }
+
+.chip svg { width: 26px; height: 10px; flex: none; }
+.card .f { display: inline; }
+.card .u { margin-left: 2px; }
+.card .t { display: block; margin-top: 4px; }
+@media (max-width: 620px) {
+  figure:not(.w) .tile:has(> svg[viewBox^="0 0 720"]) { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  figure:not(.w) .tile > svg[viewBox^="0 0 720"] { width: 640px; max-width: none; }
+  figure:not(.w) .tile:has(> svg[viewBox^="0 0 720"])::after { content: "swipe sideways for the full chart"; display: block; font: 11px/1 var(--mono); color: var(--ink-3); margin-top: 8px; position: sticky; left: 0; }
+  .readout table { font-size: 12px; } .readout td, .readout th { padding-right: 4px; }
+  .readout td:not(:first-child) { white-space: nowrap; }
+}

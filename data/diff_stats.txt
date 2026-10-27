@@ -1,4 +1,4 @@
 pixels 655360
 differing 25140 (3.84%)
-over 6/255 22382 (3.42%)
+over 6/255 22394 (3.42%)  (recounted as max channel delta > 6)
 max 55
