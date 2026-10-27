@@ -64,11 +64,11 @@ HEAD = '''<!doctype html>
 <link rel="stylesheet" href="{base}assets/style.css">
 <script>document.documentElement.className+=" js"</script>
 </head><body>
-<header class="site"><div class="wrap"><a class="brand" href="{base}">blog <span>/ calum</span></a><nav><a href="{base}">posts</a></nav></div></header>
+<header class="site"><div class="wrap"><a class="brand" href="{base}">World Wide Webb</a><nav><a href="{base}">posts</a></nav></div></header>
 <main><div class="wrap">
 '''
 FOOT = '''</div></main>
-<footer class="site"><div class="wrap">Plain HTML, black theme borrowed from the rest of my sites. No tracking, no cookies.</div></footer>
+<footer class="site"><div class="wrap">&copy; 2026 World Wide Webb</div></footer>
 </body></html>
 '''
 
@@ -82,7 +82,7 @@ post = HEAD.format(title='How Quantum draws a cottage without drawing 333,804 tr
                    base='../../')
 post += '''<article>
 <h1>How Quantum draws a cottage without drawing 333,804 triangles</h1>
-<div class="meta">Oct 26, 2026 &middot; updated Oct 27 with the shadow speed-up &middot; renderer notes</div>
+<div class="meta">Oct 26, 2026 &middot; updated Oct 27 with the shadow speed-up</div>
 <p class="lede">Quantum is the voxel editor I'm building. It was called Voxelite until very recently, which is why the code paths below still say voxelite. The part I keep poking at is the renderer, because an editor with a stuttering viewport is just a sad spreadsheet.</p>
 <p>My test scene is a small autumn cottage with a tree, a fence and a chimney I'm unreasonably proud of. The example file in the repo has 27,817 voxels.</p>
 ''' + img('../../img/wide_full.png', 'Isometric render of a voxel cottage with an orange autumn tree',
@@ -205,9 +205,9 @@ if (occupancy.words[mask] & (1u << (brick % 32u))) == 0u {
 os.makedirs(f'{ROOT}/posts/quantum-renderer', exist_ok=True)
 open(f'{ROOT}/posts/quantum-renderer/index.html', 'w').write(post)
 
-index = HEAD.format(title='Calum\'s blog', desc='Notes on things I build.', base='') + '''
-<h1>Notes on things I build</h1>
-<p class="lede">Mostly Quantum for now, a voxel editor with a renderer I fuss over too much.</p>
+index = HEAD.format(title='World Wide Webb', desc='Writing from World Wide Webb, an independent app studio.', base='') + '''
+<h1>Writing</h1>
+<p class="lede">World Wide Webb is an independent app studio. Currently building Quantum, a voxel editor made for AI agents.</p>
 <ul class="posts">
 <li><a href="posts/quantum-renderer/"><div class="tile">
 <div class="t">How Quantum draws a cottage without drawing 333,804 triangles</div>

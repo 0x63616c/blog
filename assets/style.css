@@ -1,4 +1,4 @@
-/* Palette copied from worldwidewebb packages/theme/palette.css (Vercel-black). */
+/* Site styles. */
 :root {
   color-scheme: dark;
   --bg: #000000; --tile: #0a0a0a; --tile-2: #111111; --nest: #181818;
