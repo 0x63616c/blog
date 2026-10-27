@@ -1,4 +1,4 @@
-/* Interactive bits for the Quantum post. Every number comes from window.MESH and window.CHART,
+/* Interactive bits for the Voxelite post. Every number comes from window.MESH and window.CHART,
    which tools/export_data.py writes from the real data files. Nothing is typed in here. */
 (function () {
   'use strict';
