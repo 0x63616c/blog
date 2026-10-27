@@ -30,7 +30,7 @@ def tri_chart():
     W, H, L, R, T = 720, 330, 130, 130, 40
     lo, hi = 4.0, 8.1  # log10 axis
     def X(v): return L + (math.log10(v) - lo) / (hi - lo) * (W - L - R)
-    s = [svg_open(W, H, 'Triangles: one cube per voxel versus what Voxelite draws',
+    s = [svg_open(W, H, 'Triangles: one cube per voxel versus what Quantum draws',
                   'Log-scale bars for four scenes. Cube per voxel is twelve triangles per voxel; the drawn count is from the baseline run.')]
     for e in range(5, 9):
         x = X(10 ** e)

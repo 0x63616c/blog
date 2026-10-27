@@ -38,13 +38,13 @@ greedy_svg, g_units, g_quads = F.greedy_diagram()
 trace_svg, t_naive, t_fast = F.trace_diagram()
 abl_svg, A = F.ablation_chart()
 
-post = HEAD.format(title='How Voxelite draws a cottage without drawing 333,804 triangles',
+post = HEAD.format(title='How Quantum draws a cottage without drawing 333,804 triangles',
                    desc='Culling, greedy meshing, chunks, exact voxel shadows and a bench that keeps me honest, with the real numbers from my renderer.',
                    base='../../')
 post += '''<article>
-<h1>How Voxelite draws a cottage without drawing 333,804 triangles</h1>
+<h1>How Quantum draws a cottage without drawing 333,804 triangles</h1>
 <div class="meta">Oct 26, 2026 &middot; renderer notes</div>
-<p class="lede">Voxelite is the voxel editor I'm building. The name might change, it has already been three different things this month. The part I keep poking at is the renderer, because an editor with a stuttering viewport is just a sad spreadsheet.</p>
+<p class="lede">Quantum is the voxel editor I'm building. It was called Voxelite until very recently, which is why the code paths below still say voxelite. The part I keep poking at is the renderer, because an editor with a stuttering viewport is just a sad spreadsheet.</p>
 <p>My test scene is a small autumn cottage with a tree, a fence and a chimney I'm unreasonably proud of. The example file in the repo has 27,817 voxels.</p>
 ''' + img('../../img/wide_full.png', 'Isometric render of a voxel cottage with an orange autumn tree',
           'A render from the CPU rasteriser in the repo, because the box I wrote this on has no GPU. It is slow but deterministic, which matters at the end. The real viewport is wgpu on Metal.') + '''
@@ -151,15 +151,15 @@ if (occupancy.words[mask] & (1u << (brick % 32u))) == 0u {
 </article>
 ''' + FOOT
 
-os.makedirs(f'{ROOT}/posts/voxelite-renderer', exist_ok=True)
-open(f'{ROOT}/posts/voxelite-renderer/index.html', 'w').write(post)
+os.makedirs(f'{ROOT}/posts/quantum-renderer', exist_ok=True)
+open(f'{ROOT}/posts/quantum-renderer/index.html', 'w').write(post)
 
 index = HEAD.format(title='Calum\'s blog', desc='Notes on things I build.', base='') + '''
 <h1>Notes on things I build</h1>
-<p class="lede">Mostly Voxelite for now, a voxel editor with a renderer I fuss over too much.</p>
+<p class="lede">Mostly Quantum for now, a voxel editor with a renderer I fuss over too much.</p>
 <ul class="posts">
-<li><a href="posts/voxelite-renderer/"><div class="tile">
-<div class="t">How Voxelite draws a cottage without drawing 333,804 triangles</div>
+<li><a href="posts/quantum-renderer/"><div class="tile">
+<div class="t">How Quantum draws a cottage without drawing 333,804 triangles</div>
 <div class="d">Culling, greedy meshing, chunks, exact voxel shadows, and the bench that stops me lying to myself.</div>
 <div class="m">Oct 26, 2026</div></div></a></li>
 </ul>
