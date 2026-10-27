@@ -2,8 +2,8 @@
   "cleanUrls": true,
   "trailingSlash": true,
   "redirects": [
-    { "source": "/posts/quantum-renderer", "destination": "/posts/voxelite-renderer/", "permanent": true },
-    { "source": "/posts/quantum-renderer/", "destination": "/posts/voxelite-renderer/", "permanent": true }
+    { "source": "/posts/voxelite-renderer", "destination": "/posts/quantum-renderer/", "permanent": true },
+    { "source": "/posts/voxelite-renderer/", "destination": "/posts/quantum-renderer/", "permanent": true }
   ],
   "headers": [
     { "source": "/(.*)", "headers": [ { "key": "X-Content-Type-Options", "value": "nosniff" } ] }
