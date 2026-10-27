@@ -82,7 +82,7 @@ post = HEAD.format(title='How Quantum draws a cottage without drawing 333,804 tr
                    base='../../')
 post += '''<article>
 <h1>How Quantum draws a cottage without drawing 333,804 triangles</h1>
-<div class="meta">Oct 26, 2026 &middot; renderer notes</div>
+<div class="meta">Oct 26, 2026 &middot; updated Oct 27 with the shadow speed-up &middot; renderer notes</div>
 <p class="lede">Quantum is the voxel editor I'm building. It was called Voxelite until very recently, which is why the code paths below still say voxelite. The part I keep poking at is the renderer, because an editor with a stuttering viewport is just a sad spreadsheet.</p>
 <p>My test scene is a small autumn cottage with a tree, a fence and a chimney I'm unreasonably proud of. The example file in the repo has 27,817 voxels.</p>
 ''' + img('../../img/wide_full.png', 'Isometric render of a voxel cottage with an orange autumn tree',
@@ -150,7 +150,7 @@ for z in lo[2]..=hi[2] {
 
 <h2>Shadows that are actually right</h2>
 <p>Most real-time shadows use a shadow map: render the scene from the sun, then compare depths. It's fast and it's fuzzy, with bias to tune, resolution to tune, and the occasional floating-object look. I wanted voxel shadows to be exactly the voxel shape, so every pixel shoots a ray at the sun through the grid and asks whether it hits a voxel on the way out.</p>
-''' + widget('w-shadow', SHADOW_LIVE, old_pair, 'These are CPU renders of the example file, the same trace the GPU does in the fragment shader. Shadows off against shadows on, so this is the cost of shadows. It is not a before and after of a speed-up, because that hasn\'t landed. The pixel difference view works out, in your browser, which pixels changed between the two images and how much.') + '''
+''' + widget('w-shadow', SHADOW_LIVE, old_pair, 'These are CPU renders of the example file, the same trace the GPU does in the fragment shader. Shadows off against shadows on, so this is the cost of shadows. It is not a before and after of the speed-up, that comes further down. The pixel difference view works out, in your browser, which pixels changed between the two images and how much.') + '''
 <p>That's a per-pixel loop, so it had better be smart about empty space. The occupancy grid is stored as 8&times;8&times;8 bricks: 512 bits is 16 words per brick, plus one more bitmask with a single bit per brick that says whether it has anything in it at all. An empty brick gets crossed in one jump.</p>
 ''' + code('''
 let brick = b.x + occupancy.bricks.x * (b.y + occupancy.bricks.y * b.z);
@@ -164,12 +164,24 @@ if (occupancy.words[mask] & (1u << (brick % 32u))) == 0u {
 ''' + fig(trace_svg, f'A toy ray on a toy grid. Stepping cell by cell takes {t_naive} steps and skipping empty bricks takes {t_fast}, and both land on the same red cell. The step counts are computed from this toy, not from the renderer.') + '''
 <p>That works, and it's still the most expensive thing in the frame by a distance. I turned it off to see how much, one change at a time on the real shader, 60 frames per phase.</p>
 ''' + widget('w-abl', ABL_LIVE, abl_svg, 'Baseline run on the Mac mini M2. GPU time from timestamp queries, median of 60 frames. Tap a group for its numbers, and switch bars off to compare two.') + f'''
-<div class="note"><p>Read this chart carefully, because it isn't a before and after. It's what shadows cost, which is the ceiling on what any shadow speed-up could ever win. At the fit camera on Autumn that's {A[('Autumn, fit','base')]:.1f} ms down to {A[('Autumn, fit','noshadow')]:.1f}. Zoomed in on the 1M terrain it's {A[('Terrain 1M, close','base')]:.1f} ms down to {A[('Terrain 1M, close','noshadow')]:.1f}. I haven't sped the trace up yet, so there is no real after number to show you.</p></div>
+<div class="note"><p>Read this chart carefully, because it isn't a before and after. It's what shadows cost, which is the ceiling on what any shadow speed-up could ever win. At the fit camera on Autumn that's {A[('Autumn, fit','base')]:.1f} ms down to {A[('Autumn, fit','noshadow')]:.1f}. Zoomed in on the 1M terrain it's {A[('Terrain 1M, close','base')]:.1f} ms down to {A[('Terrain 1M, close','noshadow')]:.1f}. This is the budget the speed-up below was spending from.</p></div>
 <p>The other ablations were more interesting than I expected. Removing the extra geometry attachment write changed nothing measurable (18.5 ms against 18.6 on Autumn at the fit camera). The sponge scene has 912,356 triangles and the terrain has 149,192, and the sponge renders three times faster close up. Triangle count isn't the problem. Pixels times ray length is. Rendering at 1x instead of 2x supersample also helps a lot (18.6 ms down to 8.2 on Autumn) but I'm not going to take it, because the whole rule here is that the picture doesn't get worse. It's a measurement, not a plan.</p>
 ''' + '<p>Same idea for speed. This is every scene in the baseline on both machines. Slide to a scene or tap the chart, and switch lines on and off. The scenes are not a controlled sweep (a sponge is not a terrain), so read each line as four separate measurements joined up so you can see them, not as a curve.</p>' + widget('w-frames', FRAMES_LIVE, F.frame_chart(), 'Baseline run, wall time per frame, median of 60 frames. The M5 Pro GPU timestamp came back zero, so its numbers are wall times, which equal GPU wait because the pipeline is GPU-bound. The M2 mini was under CI load when I ran it, so treat its lines as rough. Fit is the camera framing the whole scene, close is zoomed in, orbit is the camera swinging round.') + '''
 <p>So on the M5 Pro the cottage holds 120 Hz at the fit camera (7.8 ms against an 8.3 budget) and doesn't once you zoom in. Ten million voxels doesn't hold it anywhere.</p>
-<p>The plan for the trace is a second occupancy level, one bit per 32-cell super-brick, so rays cross big empty areas in a few steps. Plus clipping each ray to the occupied bounds and to the highest occupied cell along the sun direction. The image should come out identical. There's one trap: the loop stops at 768 steps, and a ray that used to run out of steps and give up (no shadow) could now finish its walk and find something. A few pixels could change. I want that to show up in a diff, not slip through.</p>
-<div class="note"><p>That change hasn't landed. When it does, the numbers get added here with a proper after chart. If the result is boring I'll say so.</p></div>
+<h2>Making the trace cheaper</h2>
+<p>So I took the plan from the previous section and built it. Two changes, both in the shadow trace and nothing else. The first is a second occupancy level, one bit per 32&times;32&times;32 super-brick, so a ray crosses a big empty region in one jump instead of a few dozen brick hops. The second is an early exit: once a ray leaves the box that contains every occupied cell, nothing ahead of it can block the sun, so it stops there instead of walking out to the edge of the grid.</p>
+<p>The trap I worried about earlier was the 768 step limit, where a ray that used to give up could now finish its walk and find something. I wanted a pixel diff to catch that. It had nothing to catch. The visual check came back pixel-identical, max delta 0.</p>
+<table>
+<tr><th>Scene, camera</th><th>Before (ms)</th><th>After (ms)</th><th>Change</th></tr>
+<tr><td>Terrain 1M, close</td><td>73.75</td><td>45.13</td><td>&minus;38.8%</td></tr>
+<tr><td>Terrain 1M, fit</td><td>18.26</td><td>13.48</td><td>&minus;26%</td></tr>
+<tr><td>Autumn, close</td><td>39.18</td><td>30.55</td><td>&minus;22%</td></tr>
+<tr><td>Autumn, fit</td><td>18.56</td><td>14.53</td><td>&minus;21.7%</td></tr>
+<tr><td>Terrain 10M, close</td><td>112.2</td><td>95.8</td><td>&minus;15%</td></tr>
+<tr><td>Sponge 1M</td><td colspan="2">about the same</td><td>~0%</td></tr>
+</table>
+<p>The biggest win is the close camera on the 1M terrain, 74 ms down to 45, and the gain shrinks as the scene gets bigger or the camera pulls back. The sponge doesn't move at all. These numbers are from the M2 Mac mini, which was under load again, so the absolute milliseconds are approximate. Read the percentages as the rough size of the win, not as exact figures.</p>
+<div class="note"><p>It's fast, and still exact. That's the whole point of doing it this way. If the picture had moved by one pixel I'd have thrown the change away.</p></div>
 
 <h2>The part that keeps me from lying</h2>
 <p>I don't trust myself to eyeball a shadow change. So the plan is two small tools that share the same scenes and camera paths. One measures speed, the other measures whether the picture moved.</p>
@@ -182,11 +194,11 @@ if (occupancy.words[mask] & (1u << (brick % 32u))) == 0u {
 <p>There's a looser tolerance mode for changes I actually want, like tweaking the look: at most 0.05 percent of pixels off by more than 6/255, and no blob of failing pixels bigger than 32 px. Goldens are pinned to one chip, the Mac mini, because shadow and AO output can differ in the last bits between GPUs, and every other machine gets a polite skip rather than a failure. Before goldens are trusted, every frame is rendered twice and has to match itself. Changing a golden on purpose takes a command that wants a reason and writes it to a changelog.</p>
 <p>Here is roughly what the diff output looks like. This one is the cottage with shadows on against shadows off, from the CPU renderer. It isn't a regression, I just needed a real pair of images that differ.</p>
 ''' + img('../../img/diff_heatmap.png', 'Log-scaled difference heatmap, black where the images match', 'Black means identical. 25,140 of 655,360 pixels differ (3.84 percent), 22,394 of them by more than 6/255 in at least one channel, biggest channel difference 55. The tolerance mode would reject this and exact mode would reject it harder, which is the point.') + '''
-<div class="note"><p>Status: the bench and the visual tool are being written as I type this and aren't merged yet. Nothing is gated by them today, and the speed numbers above come from a one-off instrumented run, not from the finished tool.</p></div>
-<p>That's where it is. The second brick level is next.</p>
+<div class="note"><p>Status: both tools are merged now, and the shadow change above was checked with them. The baseline numbers earlier in the post still come from the one-off instrumented run.</p></div>
+<p>That's where it is.</p>
 
 <h2>Where the numbers come from</h2>
-<p>All speed numbers come from a baseline run of the production Metal worker driven headless: 4128&times;3232 pixel target, 4x MSAA, 2x supersample, exact voxel shadows, commit d81e670, on 2026-10-26. The M2 mini was busy running CI during the runs (load average 11 to 66), so treat those timings as rough. The M5 Pro was in normal use and its numbers are from a single run. The raw per-frame data for the ablation and the triangle counts is in <code>data/</code> in this site's repo, along with the script that draws every chart on this page.</p>
+<p>All speed numbers come from a baseline run of the production Metal worker driven headless: 4128&times;3232 pixel target, 4x MSAA, 2x supersample, exact voxel shadows, commit d81e670, on 2026-10-26. The M2 mini was busy running CI during the runs (load average 11 to 66), so treat those timings as rough. The M5 Pro was in normal use and its numbers are from a single run. The shadow speed-up table is from the same M2 mini, before and after the change, and it was under load then too. The raw per-frame data for the ablation and the triangle counts is in <code>data/</code> in this site's repo, along with the script that draws every chart on this page.</p>
 </article>
 ''' + FOOT.replace('</body>', '<script src="../../assets/mesh-data.js"></script>\n<script src="../../assets/chart-data.js"></script>\n<script src="../../assets/widgets.js"></script>\n</body>')
 
