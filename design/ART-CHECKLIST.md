@@ -2,6 +2,13 @@
 
 Read this before touching the look of the site, and tick it off before opening a design PR. Not deployed (see `.vercelignore`).
 
+## Locked requirements (set by Calum, do not trade away)
+1. **Black background.** Set Oct 27, 2026 after round 1: concepts B (Ultramarine) and C (Highlighter) were the closest, but the page ground must be black. Every concept, mockup and shipped design uses a black ground (`#000000`, or a black that reads as black on a calibrated screen). Colour lives in type, flat fields, art and icons on top of that black, never by lifting the ground to blue, white, cream or yellow.
+2. Links to X (@worldwidewebbco) and GitHub (0x63616c) with real brand icons, plus a pixel-W favicon. These stay in every round.
+3. The studio's voxel cottage render stays the hero asset.
+
+Black is not what Calum rejected in the original. The original failed on template look (tile card, system sans, self-describing footer). Black done with a point of view is the brief.
+
 ## Target
 A small studio's own publication. It should look like someone with taste made it for these specific posts, not like a theme. Closest in spirit: Panic's blog, Cultured Code, Hundred Rabbits, Rauno, iA. Warm, confident, specific, with one strong idea per page.
 
@@ -18,7 +25,7 @@ A small studio's own publication. It should look like someone with taste made it
 | `inessential.png` | inessential.com | A plain page can be good when the writing and type are right |
 
 ## Before (what Calum rejected)
-`design/home-before.png`, `design/post-before.png`: black page, Vercel-style tile card, system sans, a footer that described its own tech. Do not drift back toward it.
+`design/home-before.png`, `design/post-before.png`: Vercel-style tile card, system sans, a footer that described its own tech. Do not drift back toward it.
 
 ## Rules
 1. One distinctive idea per concept (colour, type, or the cottage render), stated in a sentence before building.
@@ -29,13 +36,14 @@ A small studio's own publication. It should look like someone with taste made it
 6. X (@worldwidewebbco) and GitHub (0x63616c) brand SVG icons, in the header and footer, with visible focus and hover states and aria-labels.
 7. Favicon is the pixel W in the concept's palette, with SVG, 16/32 PNG, 180 apple-touch, 512, and `.ico`. Check it at 16px.
 8. Mobile at 390px and desktop at 1440px both reviewed as screenshots before merge.
-9. Review harshly against a commercial bar: would a paid studio ship this? If the answer is "it's fine", it isn't done.
+9. On black: check contrast of body text (>= 7:1 preferred), the favicon on a dark tab and a light tab, and that no surface is lifted to grey cards to fake depth.
+10. Review harshly against a commercial bar: would a paid studio ship this? If the answer is "it's fine", it isn't done.
 
 ## Never again
 - No self-describing meta copy like "plain html, black themed" (Oct 27, 2026). The site never talks about how it was built, its theme, or its lack of tracking.
 - No filler phrasing: "sad spreadsheet" style quips, "this is not a tutorial", "words only go so far", "let's dive in", "in this post we will".
-- No generic dark template: black background plus Vercel-style bordered tiles plus small monospace labels.
-- No near-black plus a single acid accent as the whole identity.
+- No generic dark template: black background plus Vercel-style bordered tiles plus small monospace labels. (Black itself is required, see Locked requirements.)
+- No near-black plus a single acid accent (lime, neon green, electric yellow) as the whole identity. On the required black ground, build identity from type, scale, the cottage render and more than a lone accent dot.
 - No cream plus serif plus terracotta default "editorial" look.
 - No SaaS card grids for a one-post blog.
 - No ALL-CAPS eyebrows, mono micro-labels, or middle-dot meta strings ("Oct 26 · updated · renderer notes").
