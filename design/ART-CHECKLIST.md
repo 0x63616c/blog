@@ -4,9 +4,11 @@ Read this before touching the look of the site, and tick it off before opening a
 
 ## Locked requirements (set by Calum, do not trade away)
 1. **Black background.** Set Oct 27, 2026 after round 1: concepts B (Ultramarine) and C (Highlighter) were the closest, but the page ground must be black. Every concept, mockup and shipped design uses a black ground (`#000000`, or a black that reads as black on a calibrated screen). Colour lives in type, flat fields, art and icons on top of that black, never by lifting the ground to blue, white, cream or yellow.
-2. Links to X (@worldwidewebbco) and GitHub (0x63616c) with real brand icons, plus a pixel-W favicon. These stay in every round. They do not live in top-right header buttons (see Never again); the treatment is still being chosen in round 3.
+2. Links to X (@worldwidewebbco) and GitHub (0x63616c) with real brand icons, plus a pixel-W favicon. These stay in every round. They do not live in top-right header buttons (see Never again).
+   - **Placement is treatment C, chosen by Calum Oct 27, 2026:** a bare X and GitHub icon pair (no box, no ring, no fill) sitting beside the logo on the left of the masthead, after a hairline divider. The top right stays clear; only the plain "Writing" text link lives there. Same on every page. Muted by default, amber on hover and keyboard focus, aria-labels, at least a 44px hit area.
 3. **Direction: R2-2 Autumn Chapters.** Chosen by Calum on Oct 27, 2026: black ground, flat full-bleed chapter bands in amber, moss and slate taken from the cottage render, bone ink, Epilogue plus Literata, brick code rule, contents rail on posts. Later rounds refine this; they do not swap it for another concept.
 4. The studio's voxel cottage render stays the hero asset.
+5. **The home tagline rotates, chosen by Calum Oct 27, 2026.** It rotates among the ranked options in `concepts-r3/TAGLINES.md`: "Every triangle accounted for.", "Apps with the lid off.", "A world for agents to build in.", "Cubes in, worlds out." (the long #4, "Small studio. Strong opinions about triangles.", reads too long at display size and is left out). A random one per page load, then a gentle timed crossfade. With `prefers-reduced-motion: reduce` it picks one per load and never animates. No JS shows the first. The hero height is reserved for the tallest line so nothing shifts, only the active line is exposed to assistive tech, and rotation pauses on hover and focus.
 
 Black is not what Calum rejected in the original. The original failed on template look (tile card, system sans, self-describing footer). Black done with a point of view is the brief.
 
@@ -34,7 +36,7 @@ A small studio's own publication. It should look like someone with taste made it
 3. The voxel cottage render is the studio's best asset. Use the cutout (`image-rendering: pixelated` when scaling), never a blurred or smoothed version.
 4. Two typefaces at most, self-hosted (the site promises no third-party requests). Not Inter, Roboto, Fraunces, Geist, Instrument Serif, Space Grotesk.
 5. Pass `npx impeccable detect` with zero findings before showing anything.
-6. X (@worldwidewebbco) and GitHub (0x63616c) brand SVG icons, placed per the round-3 treatment (never as boxed or round icon buttons at the top right of the header), with visible focus and hover states and aria-labels.
+6. X (@worldwidewebbco) and GitHub (0x63616c) brand SVG icons, placed per treatment C, beside the logo (never as boxed or round icon buttons at the top right of the header), with visible focus and hover states and aria-labels.
 7. Favicon is the pixel W in the concept's palette, with SVG, 16/32 PNG, 180 apple-touch, 512, and `.ico`. Check it at 16px.
 8. Mobile at 390px and desktop at 1440px both reviewed as screenshots before merge.
 9. On black: check contrast of body text (>= 7:1 preferred), the favicon on a dark tab and a light tab, and that no surface is lifted to grey cards to fake depth.
